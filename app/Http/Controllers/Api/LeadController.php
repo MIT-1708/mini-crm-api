@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\LeadStatusChanged;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
-use App\Http\Requests\AssignLeadRequest;
 use App\Http\Resources\LeadResource;
+use App\Jobs\NotifyRepOfAssignment;
 use App\Models\Lead;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -49,11 +51,11 @@ class LeadController extends Controller
 
         // Searching by name, email, company (case-insensitive)
         if ($request->has('search')) {
-            $search = '%' . $request->input('search') . '%';
+            $search = '%'.$request->input('search').'%';
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', $search)
-                  ->orWhere('email', 'ilike', $search)
-                  ->orWhere('company', 'ilike', $search);
+                    ->orWhere('email', 'ilike', $search)
+                    ->orWhere('company', 'ilike', $search);
             });
         }
 
@@ -93,7 +95,7 @@ class LeadController extends Controller
 
         // Dispatch Assignment job if assigned to someone
         if ($lead->assigned_to) {
-            \App\Jobs\NotifyRepOfAssignment::dispatch($lead);
+            NotifyRepOfAssignment::dispatch($lead);
         }
 
         return (new LeadResource($lead))
@@ -125,7 +127,7 @@ class LeadController extends Controller
         // Enforce won/lost activity rule
         if (isset($data['status']) && in_array($data['status'], ['won', 'lost'])) {
             if ($lead->status !== $data['status']) {
-                if (!$lead->activities()->exists()) {
+                if (! $lead->activities()->exists()) {
                     throw ValidationException::withMessages([
                         'status' => ['A lead must have at least one activity logged before its status can be changed to won or lost.'],
                     ]);
@@ -138,12 +140,12 @@ class LeadController extends Controller
 
         // Dispatch Assignment job if assignee has changed
         if ($lead->assigned_to && $lead->assigned_to !== $oldAssignedTo) {
-            \App\Jobs\NotifyRepOfAssignment::dispatch($lead);
+            NotifyRepOfAssignment::dispatch($lead);
         }
 
         // Fire status changed event if status changed
         if (isset($data['status']) && $data['status'] !== $lead->getOriginal('status')) {
-            event(new \App\Events\LeadStatusChanged($lead, $lead->getOriginal('status')));
+            event(new LeadStatusChanged($lead, $lead->getOriginal('status')));
         }
 
         return new LeadResource($lead);
@@ -160,11 +162,11 @@ class LeadController extends Controller
         $oldAssignedTo = $lead->assigned_to;
 
         $lead->update([
-            'assigned_to' => $data['assigned_to']
+            'assigned_to' => $data['assigned_to'],
         ]);
 
         if ($lead->assigned_to && $lead->assigned_to !== $oldAssignedTo) {
-            \App\Jobs\NotifyRepOfAssignment::dispatch($lead);
+            NotifyRepOfAssignment::dispatch($lead);
         }
 
         return new LeadResource($lead->load('assignedRep'));

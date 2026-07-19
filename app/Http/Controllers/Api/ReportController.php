@@ -29,7 +29,7 @@ class ReportController extends Controller
                 'leads as qualified_leads_count' => fn ($q) => $q->where('status', 'qualified'),
                 'leads as won_leads_count' => fn ($q) => $q->where('status', 'won'),
                 'leads as lost_leads_count' => fn ($q) => $q->where('status', 'lost'),
-                'activitiesThroughLeads as total_activities'
+                'activitiesThroughLeads as total_activities',
             ])
             ->withSum('leads as total_expected_value', 'expected_value')
             ->withSum(['leads as won_expected_value' => fn ($q) => $q->where('status', 'won')], 'expected_value');

@@ -106,3 +106,21 @@ Run the test suite inside the container:
 ```bash
 ./vendor/bin/sail test
 ```
+
+---
+
+## Project Considerations
+
+### 1. Assumptions Made
+- **Won/Lost Initial Creation**: A new lead cannot be created directly with `won` or `lost` status since activity logging requires a valid, pre-existing `lead_id` database record. The API rejects creating a lead with `won`/`lost` initially and prompts the user to create it in another status and log activities first.
+- **Search Behavior**: Case-insensitive partial matching (`ilike`) is used for searching name, email, and company fields to support Postgres out-of-the-box.
+- **Option B Metric**: The activity metric in the performance report counts all activities logged on the leads currently assigned to the rep, serving as a measure of lead engagement.
+
+### 2. Deliberate Trade-offs
+- **Single Query Reporting**: Used optimized database-level subqueries (`withCount` and `withSum`) for the rep performance report. While a Materialized View or an ELK-based read-model is standard for extremely large databases (millions of records), a single highly optimized SQL query runs efficiently for ~100k leads without the complexity of cache synchronization or background refresh lag.
+
+### 3. Future Enhancements (With More Time)
+- **Report Caching**: Implementing Redis caching with cache tag invalidations on lead/activity writes.
+- **Rate Limiting**: Throttling login requests to prevent brute force attacks.
+- **API Documentation**: Adding Scribe or OpenAPI/Swagger specifications for cleaner integration.
+

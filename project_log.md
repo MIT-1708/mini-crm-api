@@ -5,8 +5,8 @@ This document records the development phases, status updates, and modifications 
 ---
 
 ## Current Status
-- **Current Stage**: Stage 5 (Performance Reporting & Testing Setup)
-- **Status**: In Progress (Running Docker containers and finalizing dependency installations)
+- **Current Stage**: Stage 6 (Testing & Extras)
+- **Status**: Completed (All tests passed, all deliverables prepared)
 
 ---
 
@@ -62,3 +62,11 @@ This document records the development phases, status updates, and modifications 
   - Added `activitiesThroughLeads` relation in [User.php](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/app/Models/User.php) to count activities on leads assigned to reps (Option B).
   - Implemented [ReportController.php](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/app/Http/Controllers/Api/ReportController.php) using a highly optimized, single Eloquent aggregation query (using subqueries with `withCount` and `withSum`) to calculate the rep performance metrics.
   - Wired all endpoints in [api.php](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/routes/api.php) under the Sanctum middleware.
+
+### Stage 6: Testing & Extras (2026-07-19)
+- **Actions Taken**:
+  - Implemented `NotifyRepOfAssignment` queued job to log and process lead assignments.
+  - Implemented `LeadStatusChanged` event and `AutoRecordStatusChangeActivity` listener to log status history changes.
+  - Created a robust test suite [CrmTest.php](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/tests/Feature/CrmTest.php) verifying all functional requirements (Auth, Visibility, won/lost transition validation rules, assignment restrictions, and rep performance reports).
+  - Verified and passed all 9 tests (27 assertions) successfully in the Sail environment.
+  - Updated the [README.md](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/README.md) to fully address assumptions, trade-offs, and future improvements.

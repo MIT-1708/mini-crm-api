@@ -14,8 +14,6 @@ class AuthController extends Controller
     /**
      * Authenticate credentials and return a personal access token.
      *
-     * @param LoginRequest $request
-     * @return JsonResponse
      * @throws ValidationException
      */
     public function login(LoginRequest $request): JsonResponse
@@ -38,7 +36,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
-            ]
+            ],
         ]);
     }
 }
