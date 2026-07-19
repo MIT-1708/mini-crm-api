@@ -1,58 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mini-CRM API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A robust, high-performance, and cleanly designed JSON API for a Mini-CRM built with Laravel (using Laravel Sail & PostgreSQL).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technical Stack & Configuration
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework**: Laravel 13.x
+- **Database**: PostgreSQL 18
+- **Authentication**: Laravel Sanctum (API Tokens)
+- **Local Environment**: Laravel Sail (Docker-based)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Requirements
+Ensure you have Docker Desktop running on your host machine.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 2. Environment Setup
+Copy the environment template file:
 ```bash
-composer require laravel/boost --dev
+cp .env.example .env
+```
+The `.env` file is pre-configured to link with Sail and forward the database port to **`5433`** to avoid conflicts on port `5432`.
 
-php artisan boost:install
+### 3. Spin Up Docker Containers
+Boot up the Docker containers in the background:
+```powershell
+# On Windows PowerShell
+.\vendor\bin\sail up -d
+
+# On Linux/macOS/Bash
+./vendor/bin/sail up -d
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 4. Run Migrations & Seed Database
+Reset the database tables, apply schema migrations, and seed mock CRM users (Managers & Reps), leads, and activities:
+```bash
+./vendor/bin/sail artisan migrate:fresh --seed
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Seeded Users (for Testing)
 
-## Code of Conduct
+You can log in using these default credentials:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Manager User**:
+  - Email: `manager@crm.com`
+  - Password: `password`
+- **Sales Reps**:
+  - Email: `rep1@crm.com`, `rep2@crm.com`, or `rep3@crm.com`
+  - Password: `password`
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Database Connection Settings (for TablePlus, DBeaver, etc.)
 
-## License
+To connect your database management tool to the PostgreSQL container, use the following credentials:
+- **Host**: `127.0.0.1` (or `localhost`)
+- **Port**: `5433`
+- **Database**: `mini_crm`
+- **Username**: `sail`
+- **Password**: `password`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## API Endpoints
+
+All endpoints require the `Accept: application/json` header. Except for `/api/login`, all routes require authentication via a Sanctum Bearer Token (`Authorization: Bearer <token>`).
+
+### 1. Authentication
+- **`POST /api/login`**: Sign in and receive a Sanctum API token.
+  - Body params: `email`, `password`.
+
+### 2. Leads Management
+- **`GET /api/leads`**: Get a list of leads (paginated, sorted, filtered).
+  - Managers see all leads; Reps see only leads assigned to them.
+  - Filters: `status` (`new`, `contacted`, `qualified`, `won`, `lost`), `source` (`web`, `referral`, `cold_call`, `event`, `other`), `assigned_to` (Manager only).
+  - Search: `search` (filters by name, email, or company using case-insensitive partial match).
+  - Sorting: `sort_by` (`created_at`, `expected_value`) and `sort_order` (`asc`, `desc`).
+- **`POST /api/leads`**: Create a new lead.
+- **`GET /api/leads/{id}`**: Show detailed lead card along with its activities history.
+- **`PATCH /api/leads/{id}`**: Update lead fields.
+  - **Won/Lost Transition Rule**: If changing status to `won` or `lost`, the lead must have at least one activity logged. Otherwise, it will fail validation with a `422 Unprocessable Entity` response.
+- **`POST /api/leads/{id}/assign`**: Assign or reassign a lead to a sales rep (Manager-only access).
+
+### 3. Activities
+- **`POST /api/leads/{id}/activities`**: Log a CRM activity (call, email, meeting, note) against a lead.
+  - Reps can only log activities for their own assigned leads.
+
+### 4. Reports
+- **`GET /api/reports/rep-performance`**: Aggregate sales rep performance report.
+  - Reps can only see their own performance metrics row; Managers see all reps.
+  - Leverages optimized, single-query PostgreSQL database aggregations for total leads, lead counts by status, expected values, and activity counts (Option B - counts all activities on leads assigned to the rep).
+
+---
+
+## Running Automated Tests
+
+A comprehensive suite of feature tests is provided to verify authentication, RBAC policies, status transition validations, activity log permissions, and reporting correctness.
+
+Run the test suite inside the container:
+```bash
+./vendor/bin/sail test
+```
