@@ -1,31 +1,31 @@
 # Mini-CRM API Implementation Tasks
 
-- [ ] **Stage 1: Setup, Migrations, and Models**
-  - [ ] Bootstrap fresh Laravel application in the workspace root using Docker.
-  - [ ] Configure Laravel Sail with PostgreSQL database and environment variables.
-  - [ ] Run Sail and verify database connectivity.
-  - [ ] Create and run `users` table migration updates (add `role` enum/string).
-  - [ ] Create `leads` table migration & index definitions.
-  - [ ] Create `activities` table migration & index definitions.
-  - [ ] Implement `User`, `Lead`, and `Activity` models with relationships and casts.
-- [ ] **Stage 2: Authentication & Seeders**
-  - [ ] Install/Configure Laravel Sanctum for API token authentication.
-  - [ ] Implement `POST /api/login` endpoint and Form Request.
-  - [ ] Create database seeders for Manager and Rep users, along with initial leads.
-- [ ] **Stage 3: Leads API & Authorization**
-  - [ ] Implement `LeadPolicy` to enforce Manager vs Rep visibility rules.
-  - [ ] Build `GET /api/leads` (list leads with filtering, searching, sorting, pagination).
-  - [ ] Build `POST /api/leads` (create lead with Validation).
-  - [ ] Build `GET /api/leads/{id}` (show lead with eager loading of rep and activities).
-  - [ ] Build `POST /api/leads/{id}/assign` (assign/reassign lead, manager only).
-- [ ] **Stage 4: Activities API & Transition Rules**
-  - [ ] Build `POST /api/leads/{id}/activities` (log activity against a lead).
-  - [ ] Build `PATCH /api/leads/{id}` (update lead fields and enforce won/lost status transition validation).
-- [ ] **Stage 5: Performance Reporting**
-  - [ ] Implement `GET /api/reports/rep-performance` using high-performance SQL/Eloquent aggregations.
-  - [ ] Enforce visibility rules (reps see only themselves, managers see all).
+- [/] **Stage 1: Setup, Migrations, and Models**
+  - [x] Bootstrap fresh Laravel application in the workspace root using Docker.
+  - [x] Configure Laravel Sail with PostgreSQL database and environment variables.
+  - [x] Run Sail and verify database connectivity.
+  - [x] Create and run `users` table migration updates (add `role` enum/string).
+  - [x] Create `leads` table migration & index definitions.
+  - [x] Create `activities` table migration & index definitions.
+  - [x] Implement `User`, `Lead`, and `Activity` models with relationships and casts.
+- [/] **Stage 2: Authentication & Seeders**
+  - [/] Install/Configure Laravel Sanctum for API token authentication.
+  - [x] Implement `POST /api/login` endpoint and Form Request.
+  - [x] Create database seeders for Manager and Rep users, along with initial leads.
+- [/] **Stage 3: Leads API & Authorization**
+  - [x] Implement `LeadPolicy` to enforce Manager vs Rep visibility rules.
+  - [x] Build `GET /api/leads` (list leads with filtering, searching, sorting, pagination).
+  - [x] Build `POST /api/leads` (create lead with Validation).
+  - [x] Build `GET /api/leads/{id}` (show lead with eager loading of rep and activities).
+  - [x] Build `POST /api/leads/{id}/assign` (assign/reassign lead, manager only).
+- [/] **Stage 4: Activities API & Transition Rules**
+  - [x] Build `POST /api/leads/{id}/activities` (log activity against a lead).
+  - [x] Build `PATCH /api/leads/{id}` (update lead fields and enforce won/lost status transition validation).
+- [/] **Stage 5: Performance Reporting**
+  - [x] Implement `GET /api/reports/rep-performance` using high-performance SQL/Eloquent aggregations.
+  - [x] Enforce visibility rules (reps see only themselves, managers see all).
 - [ ] **Stage 6: Testing & Extras**
   - [ ] Write feature tests for auth, visibility policies, won/lost rules, and report queries.
-  - [ ] Implement Queue job `NotifyRepOfAssignment` triggered on assignment.
-  - [ ] Implement Event + Listener for auto-logging status changes.
+  - [x] Implement Queue job `NotifyRepOfAssignment` triggered on assignment.
+  - [x] Implement Event + Listener for auto-logging status changes.
   - [ ] Finalize README with setup instructions and project considerations.
