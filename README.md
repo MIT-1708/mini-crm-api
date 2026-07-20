@@ -43,6 +43,14 @@ Reset the database tables, apply schema migrations, and seed mock CRM users (Man
 
 ---
 
+## User Guides & API Testing
+
+If you want to use the guide for project working, testing, and API navigation, please refer to the following files in the [guide/](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/guide) directory:
+* **[Detailed Demo Guide](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/guide/detailed_demo_guide.md)**: Walks through all core demonstration scenarios, request payloads, response structures, and test cases using curl.
+* **[Postman Step-by-Step Navigation Guide](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/guide/postman_navigation_guide.md)**: Provides a step-by-step click guide to manually build, configure, and test all CRM routes in Postman.
+
+---
+
 ## Seeded Users (for Testing)
 
 You can log in using these default credentials:
