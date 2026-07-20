@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
+use App\Enums\LeadStatus;
 use App\Models\Activity;
 use App\Models\Lead;
 use App\Models\User;
@@ -101,7 +104,7 @@ class CrmTest extends TestCase
             'status' => 'won',
         ]);
         $response->assertStatus(200);
-        $this->assertEquals('won', $lead->fresh()->status);
+        $this->assertEquals(LeadStatus::WON, $lead->fresh()->status);
     }
 
     /**

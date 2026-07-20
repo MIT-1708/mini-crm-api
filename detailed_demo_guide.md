@@ -208,3 +208,30 @@ Use these pre-configured user credentials during the demonstration:
      -H "Accept: application/json" `
      -H "Authorization: Bearer <MANAGER_OR_REP_TOKEN>"
    ```
+
+---
+
+### Request 5: Assign/Reassign Lead (`POST /api/leads/{id}/assign`)
+* **Purpose**: Demonstrates lead assignment and validation. It ensures leads can only be assigned to users with the `rep` role.
+* **HTTP Method**: `POST`
+* **URL**: `http://localhost:8080/api/leads/1/assign`
+* **Headers**:
+  * `Accept`: `application/json`
+  * `Content-Type`: `application/json`
+  * `Authorization`: `Bearer <MANAGER_TOKEN>`
+
+#### Demonstration Steps:
+1. **Assign to Rep (Succeeds)**: Send a request to assign the lead to Sales Rep 1 (ID: `2`):
+   ```json
+   {
+     "assigned_to": 2
+   }
+   ```
+   * **Expected Response**: `200 OK` (Lead successfully assigned to Rep).
+2. **Assign to Manager (Fails)**: Send a request to assign the lead to a Manager (ID: `1`):
+   ```json
+   {
+     "assigned_to": 1
+   }
+   ```
+   * **Expected Response**: `422 Unprocessable Entity` (The selected assigned to is invalid because managers cannot be assigned leads).

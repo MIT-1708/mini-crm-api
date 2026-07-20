@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use App\Enums\ActivityType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +24,7 @@ class Activity extends Model
     {
         return [
             'occurred_at' => 'datetime',
+            'type' => ActivityType::class,
         ];
     }
 

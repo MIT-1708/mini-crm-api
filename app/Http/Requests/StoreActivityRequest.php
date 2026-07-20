@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
+use App\Enums\ActivityType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreActivityRequest extends FormRequest
 {
@@ -23,7 +27,7 @@ class StoreActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'string', 'in:call,email,meeting,note'],
+            'type' => ['required', new Enum(ActivityType::class)],
             'body' => ['required', 'string'],
             'occurred_at' => ['nullable', 'date'],
         ];

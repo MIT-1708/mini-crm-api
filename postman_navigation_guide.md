@@ -158,3 +158,36 @@ This step verifies that a Sales Rep can only access their own data.
 2. In the **Authorization** tab under **Bearer Token**, replace the Manager token with the **Sales Rep** token.
 3. Click **Send**.
 4. **Show the Reviewer**: Notice that the response contains only a single row with the performance statistics for `rep1@crm.com`. The rep is blocked from seeing any other representative's metrics.
+
+---
+
+## Request 6: Lead Assignment Validation (`POST /api/leads/{id}/assign`)
+
+This step verifies that leads can only be assigned to users with the `rep` role.
+
+### Step-by-Step Clicks:
+1. Click the **`+` (New Tab)** button to open a new tab.
+2. Click the request method dropdown and select **`POST`**.
+3. In the URL input box, paste:
+   ```text
+   http://localhost:8080/api/leads/1/assign
+   ```
+4. Click the **Headers** tab. Add Key = `Accept`, Value = `application/json`.
+5. Click the **Authorization** tab. Set Type = **Bearer Token** and paste your **Manager** token (from Request 1).
+6. Click the **Body** tab. Select **raw** and choose **JSON** in the format dropdown.
+7. Paste this payload to try to assign to a Manager (ID `1`):
+   ```json
+   {
+     "assigned_to": 1
+   }
+   ```
+8. Click **Send**.
+9. **Show the Reviewer**: The request fails with a `422 Unprocessable Entity` error because managers cannot be assigned leads.
+10. Update the payload to assign to a Rep (ID `2`):
+    ```json
+    {
+      "assigned_to": 2
+    }
+    ```
+11. Click **Send**.
+12. **Show the Reviewer**: The request succeeds with `200 OK`, successfully assigning the lead to Rep 1.

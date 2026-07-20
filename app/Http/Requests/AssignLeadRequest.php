@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignLeadRequest extends FormRequest
 {
@@ -23,7 +26,11 @@ class AssignLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where('role', 'rep'),
+            ],
         ];
     }
 }

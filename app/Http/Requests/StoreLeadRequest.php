@@ -1,9 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
+use App\Enums\LeadSource;
+use App\Enums\LeadStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreLeadRequest extends FormRequest
 {
@@ -27,10 +33,14 @@ class StoreLeadRequest extends FormRequest
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:50'],
             'company' => ['nullable', 'string', 'max:255'],
-            'source' => ['required', 'string', 'in:web,referral,cold_call,event,other'],
-            'status' => ['nullable', 'string', 'in:new,contacted,qualified,won,lost'],
+            'source' => ['required', new Enum(LeadSource::class)],
+            'status' => ['nullable', new Enum(LeadStatus::class)],
             'expected_value' => ['required', 'numeric', 'min:0'],
-            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where('role', 'rep'),
+            ],
         ];
     }
 }

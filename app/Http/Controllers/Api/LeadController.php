@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Events\LeadStatusChanged;
@@ -126,7 +128,7 @@ class LeadController extends Controller
 
         // Enforce won/lost activity rule
         if (isset($data['status']) && in_array($data['status'], ['won', 'lost'])) {
-            if ($lead->status !== $data['status']) {
+            if ($lead->status->value !== $data['status']) {
                 if (! $lead->activities()->exists()) {
                     throw ValidationException::withMessages([
                         'status' => ['A lead must have at least one activity logged before its status can be changed to won or lost.'],
@@ -135,6 +137,7 @@ class LeadController extends Controller
             }
         }
 
+        $oldStatus = $lead->status->value;
         $oldAssignedTo = $lead->assigned_to;
         $lead->update($data);
 
@@ -144,8 +147,8 @@ class LeadController extends Controller
         }
 
         // Fire status changed event if status changed
-        if (isset($data['status']) && $data['status'] !== $lead->getOriginal('status')) {
-            event(new LeadStatusChanged($lead, $lead->getOriginal('status')));
+        if (isset($data['status']) && $data['status'] !== $oldStatus) {
+            event(new LeadStatusChanged($lead, $oldStatus));
         }
 
         return new LeadResource($lead);

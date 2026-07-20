@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use App\Enums\LeadSource;
+use App\Enums\LeadStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +26,8 @@ class Lead extends Model
     {
         return [
             'expected_value' => 'decimal:2',
+            'status' => LeadStatus::class,
+            'source' => LeadSource::class,
         ];
     }
 
