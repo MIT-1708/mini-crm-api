@@ -95,6 +95,12 @@ All endpoints require the `Accept: application/json` header. Except for `/api/lo
 - **`GET /api/reports/rep-performance`**: Aggregate sales rep performance report.
   - Reps can only see their own performance metrics row; Managers see all reps.
   - Leverages optimized, single-query PostgreSQL database aggregations for total leads, lead counts by status, expected values, and activity counts (Option B - counts all activities on leads assigned to the rep).
+## Completed Bonus Features
+
+We have implemented three of the bonus challenges specified in the requirements:
+1. **Docker / Sail Setup**: Fully configured containerized local environment using Laravel Sail and PostgreSQL.
+2. **Queued Job on Lead Assignment**: Dispatches a queued job `NotifyRepOfAssignment` to log and handle representative assignment notifications.
+3. **Automated Status Change Logging (Event + Listener)**: Fires a `LeadStatusChanged` event and listener `AutoRecordStatusChangeActivity` to automatically create a history log activity note whenever a lead's status is updated.
 
 ---
 
@@ -123,4 +129,12 @@ Run the test suite inside the container:
 - **Report Caching**: Implementing Redis caching with cache tag invalidations on lead/activity writes.
 - **Rate Limiting**: Throttling login requests to prevent brute force attacks.
 - **API Documentation**: Adding Scribe or OpenAPI/Swagger specifications for cleaner integration.
+
+### 4. Multi-tenancy Sketch (Bonus Design Note)
+To scale this application to support multiple tenants (different companies/organizations using the CRM) within a single codebase:
+- **Database Architecture**: We would use a **Shared Database, Shared Schema** design for cost-effective hosting and simpler deployments.
+- **Logical Isolation**: We would add a `tenant_id` column to all tenant-specific tables (`users`, `leads`, `activities`) and create a composite index on `(tenant_id, status)` or `(tenant_id, assigned_to)`.
+- **Global Query Scope**: We would define a custom Laravel Global Scope (`TenantScope`) that automatically injects `where('tenant_id', TenantManager::getTenantId())` to all database queries for these models, preventing any cross-tenant data leaks.
+- **Tenant Identification**: The active tenant would be resolved in a global middleware via subdomain detection (e.g. `{tenant}.crm.com`) or a request header (`X-Tenant-ID`).
+- **Validation Scoping**: Model validations like unique email checks would be scoped per-tenant using `Rule::unique('users')->where('tenant_id', $tenantId)`.
 

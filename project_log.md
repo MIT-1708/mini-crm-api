@@ -69,4 +69,4 @@ This document records the development phases, status updates, and modifications 
   - Implemented `LeadStatusChanged` event and `AutoRecordStatusChangeActivity` listener to log status history changes.
   - Created a robust test suite [CrmTest.php](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/tests/Feature/CrmTest.php) verifying all functional requirements (Auth, Visibility, won/lost transition validation rules, assignment restrictions, and rep performance reports).
   - Verified and passed all 9 tests (27 assertions) successfully in the Sail environment.
-  - Updated the [README.md](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/README.md) to fully address assumptions, trade-offs, and future improvements.
+  - Updated the [README.md](file:///c:/Users/allle/OneDrive/Desktop/mini-crm-api/README.md) to fully address assumptions, trade-offs, future improvements, and added a Multi-tenancy design sketch to fulfill the bonus requirements.
