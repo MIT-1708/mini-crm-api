@@ -21,7 +21,7 @@ class AutoRecordStatusChangeActivity
             'body' => sprintf(
                 'System: Lead status changed from "%s" to "%s".',
                 $event->oldStatus,
-                $event->lead->status
+                $event->lead->status->value
             ),
             'occurred_at' => now(),
         ]);
