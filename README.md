@@ -6,7 +6,7 @@ A robust, high-performance, and cleanly designed JSON API for a Mini-CRM built w
 
 ## Technical Stack & Configuration
 
-- **Framework**: Laravel 13.x
+- **Framework**: "Built on Laravel 13.x (latest stable at time of writing). Fully compatible with Laravel 11/12 conventions used in this project — no version-specific features were required."
 - **Database**: PostgreSQL 18
 - **Authentication**: Laravel Sanctum (API Tokens)
 - **Local Environment**: Laravel Sail (Docker-based)
